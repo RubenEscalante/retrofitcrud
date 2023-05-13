@@ -28,15 +28,21 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.udb.defensa.presentation.screens.alumnoscreen.AlumnoScreen
 import com.udb.defensa.presentation.screens.loginscreen.LoginScreen
+import com.udb.defensa.presentation.screens.profesorscreen.ProfesorScreen
 import com.udb.defensa.presentation.screens.singupscreen.SingUpScreen
 import com.udb.defensa.presentation.screens.splashscreen.SplashScreen
 import com.udb.defensa.presentation.viewmodels.AlumnosViewModel
 import com.udb.defensa.presentation.viewmodels.AuthViewModel
+import com.udb.defensa.presentation.viewmodels.ProfesorViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
-fun NavGraph(authViewModel: AuthViewModel, AlumnosViewModel: AlumnosViewModel) {
+fun NavGraph(
+    authViewModel: AuthViewModel,
+    AlumnosViewModel: AlumnosViewModel,
+    profesorViewModel: ProfesorViewModel
+) {
     val scaffoldState = rememberScaffoldState()
     val scope = rememberCoroutineScope()
     val navController = rememberNavController()
@@ -101,7 +107,7 @@ fun NavGraph(authViewModel: AuthViewModel, AlumnosViewModel: AlumnosViewModel) {
                 items,
                 authViewModel
             ) {
-                AlumnoScreen(AlumnosViewModel)
+                ProfesorScreen(profesorViewModel)
             }
 
 
@@ -131,8 +137,8 @@ fun MyScaffold(
         drawerContent = {
             NavigationDrawer(items, authViewModel) {
                 when (it) {
-                    MenuScreen.Alumn -> {}
-                    MenuScreen.Professor -> {}
+                    MenuScreen.Alumn -> {navController.navigate(Screen.Alumn.route)}
+                    MenuScreen.Professor -> {navController.navigate(Screen.Professor.route)}
                 }
                 scope.launch {
                     scaffoldState.drawerState.close()

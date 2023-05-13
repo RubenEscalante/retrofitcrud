@@ -1,6 +1,5 @@
 package com.udb.defensa.presentation.viewmodels
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -15,11 +14,11 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
-class AlumnosViewModel @Inject constructor(
+class ProfesorViewModel @Inject constructor(
     private val authViewModel: AuthViewModel
 ) : ViewModel() {
-    private val _alumnos = MutableLiveData<List<AlumnoModel>>()
-    val alumnos: LiveData<List<AlumnoModel>> = _alumnos
+    private val _profesores = MutableLiveData<List<AlumnoModel>>()
+    val profesores: LiveData<List<AlumnoModel>> = _profesores
 
     private val _nombre = MutableLiveData<String>()
     val nombre: LiveData<String> = _nombre
@@ -33,32 +32,32 @@ class AlumnosViewModel @Inject constructor(
     private val _isUpdate = MutableLiveData<Boolean>()
     val isUpdate: LiveData<Boolean> = _isUpdate
 
-    private val _alumnId = MutableLiveData<String>()
-    val alumnId: LiveData<String> = _alumnId
+    private val _profesorId = MutableLiveData<String>()
+    val profesorId: LiveData<String> = _profesorId
 
-    fun getAlums() {
+    fun getProfesores() {
         viewModelScope.launch(Dispatchers.IO) {
             val response =
                 authViewModel.token.value?.let {
-                    RetrofitClient.webService.getAlumnos(
+                    RetrofitClient.webService.getProfesores(
                         authViewModel.token.value!!
                     )
                 }
             withContext(Dispatchers.Main) {
                 if (response != null) {
                     if (response.isSuccessful) {
-                        _alumnos.value = response.body()!!.alumnos
+                        _profesores.value = response.body()!!.profesores
                     }
                 }
             }
         }
     }
 
-    fun addAlumn(nombre: String, apellido: String, edad: String) {
+    fun addProfesor(nombre: String, apellido: String, edad: String) {
         viewModelScope.launch(Dispatchers.IO) {
             val response =
                 authViewModel.token.value?.let {
-                    RetrofitClient.webService.addAlumnos(
+                    RetrofitClient.webService.addProfesor(
                         authViewModel.token.value!!,
                         AddAlumnoModel(nombre, apellido, edad)
                     )
@@ -66,19 +65,19 @@ class AlumnosViewModel @Inject constructor(
             withContext(Dispatchers.Main) {
                 if (response != null) {
                     if (response.isSuccessful) {
-                        getAlums()
-                        clearAlumn()
+                        getProfesores()
+                        clearProfesor()
                     }
                 }
             }
         }
     }
 
-    fun deleteAlumn(id: String) {
+    fun deleteProfesor(id: String) {
         viewModelScope.launch(Dispatchers.IO) {
             val response =
                 authViewModel.token.value?.let {
-                    RetrofitClient.webService.deleteAlumnos(
+                    RetrofitClient.webService.deleteProfesor(
                         authViewModel.token.value!!,
                         id
                     )
@@ -86,18 +85,18 @@ class AlumnosViewModel @Inject constructor(
             withContext(Dispatchers.Main) {
                 if (response != null) {
                     if (response.isSuccessful) {
-                        getAlums()
+                        getProfesores()
                     }
                 }
             }
         }
     }
 
-    fun updateAlumn(nombre: String, apellido: String, edad: String, id: String) {
+    fun updateProfesor(nombre: String, apellido: String, edad: String, id: String) {
         viewModelScope.launch(Dispatchers.IO) {
             val response =
                 authViewModel.token.value?.let {
-                    RetrofitClient.webService.updateAlumnos(
+                    RetrofitClient.webService.updateProfesor(
                         authViewModel.token.value!!,
                         id,
                         AddAlumnoModel(nombre, apellido, edad)
@@ -106,30 +105,30 @@ class AlumnosViewModel @Inject constructor(
             withContext(Dispatchers.Main) {
                 if (response != null) {
                     if (response.isSuccessful) {
-                        getAlums()
-                        clearAlumn()
+                        getProfesores()
+                        clearProfesor()
                     }
                 }
             }
         }
     }
 
-    fun onAlumnChange(name: String, apellido: String, edad: String) {
+    fun onProfesorChange(name: String, apellido: String, edad: String) {
         _nombre.value = name
         _apellido.value = apellido
         _edad.value = edad
     }
 
-    fun clearAlumn() {
-        onAlumnChange("", "", "")
+    fun clearProfesor() {
+        onProfesorChange("", "", "")
     }
 
     fun changeToUpdate(state: Boolean) {
         _isUpdate.value = state
-        clearAlumn()
+        clearProfesor()
     }
 
-    fun onAlumnUpdateId(_id: String) {
-        _alumnId.value = _id
+    fun onprofesorUpdateId(_id: String) {
+        _profesorId.value = _id
     }
 }

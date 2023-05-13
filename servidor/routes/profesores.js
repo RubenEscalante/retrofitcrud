@@ -1,33 +1,38 @@
 const express = require("express");
 const router = express.Router();
-const tareaController = require("../controllers/tareaController");
+const profesorController = require("../controllers/profesorController");
 const auth = require("../middleware/auth");
 const { check } = require("express-validator");
 
-// Crear una tarea
-// api/tareas
+// Crea profesores
+// api/profesores
 router.post(
   "/",
   auth,
   [
-    check("nombre", "El nombre es obligatorio").not().isEmpty(),
-    check("proyecto", "El Proyecto es obligatorio").not().isEmpty(),
+    check("nombre", "El nombre del alumno es obligatorio").not().isEmpty(),
+    check("apellido", "El apellido del alumno es obligatorio").not().isEmpty(),
+    check("edad", "La edad del alumno es obligatorio").not().isEmpty(),
   ],
-  tareaController.crearTarea
+  profesorController.crearProfesor
 );
 
-// Obtener las tareas por proyectos
-router.get("/", auth, tareaController.obtenerTareas);
+// Obtener todos los proyectos
+router.get("/", auth, profesorController.obtenerProfesores);
 
-// Actualizar tarea
-router.put('/:id',
+// Actualizar Proyectos via ID
+router.put(
+  "/:id",
   auth,
-  tareaController.actualizarTarea)
+  [
+    check("nombre", "El nombre del alumno es obligatorio").not().isEmpty(),
+    check("apellido", "El apellido del alumno es obligatorio").not().isEmpty(),
+    check("edad", "La edad del alumno es obligatorio").not().isEmpty(),
+  ],
+  profesorController.actualizarProfesor
+);
 
-
-//Eliminar tarea
-router.delete('/:id',
-auth,
-tareaController.eliminarTarea);
+// Eliminar un proyecto
+router.delete("/:id", auth, profesorController.eliminarProfesor);
 
 module.exports = router;

@@ -1,4 +1,4 @@
-package com.udb.defensa.presentation.screens.alumnoscreen
+package com.udb.defensa.presentation.screens.profesorscreen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -29,7 +29,6 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import com.udb.defensa.presentation.viewmodels.AlumnosViewModel
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -39,52 +38,52 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import com.udb.defensa.data.model.AlumnoModel
+import com.udb.defensa.presentation.viewmodels.ProfesorViewModel
 
 @Composable
-fun AlumnoScreen(alumnosViewModel: AlumnosViewModel) {
+fun ProfesorScreen(profesorViewModel: ProfesorViewModel) {
     var dialogState by remember { mutableStateOf(false) }
-    val alumnos by alumnosViewModel.alumnos.observeAsState(initial = emptyList())
-    alumnosViewModel.getAlums()
+    val profesores by profesorViewModel.profesores.observeAsState(initial = emptyList())
+    profesorViewModel.getProfesores()
     Column(modifier = Modifier.fillMaxSize()) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp), horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(text = "Alumno CRUD")
+            Text(text = "Profesor CRUD")
             Icon(
                 Icons.Default.Add, contentDescription = "Add Icon",
                 modifier = Modifier.pointerInput(Unit) {
                     detectTapGestures(onTap = {
                         dialogState = true
-                        alumnosViewModel.changeToUpdate(false)
+                        profesorViewModel.changeToUpdate(false)
                     })
                 })
-            alumnoDialog(
+            profesorDialog(
                 state = dialogState,
                 onDismiss = { dialogState = !dialogState },
-                alumnosViewModel = alumnosViewModel
+                profesorViewModel = profesorViewModel
             )
         }
 
         LazyColumn {
-            items(alumnos) { alumno ->
-                AlumnoCard(
-                    alumno.nombre,alumno.apellido,alumno.edad, alumno._id, alumnosViewModel, state = { dialogState = true },
-                )
+            items(profesores, key = {it._id}) { profesor ->
+                profesorCard(
+                    profesor.nombre,profesor.apellido,profesor.edad, profesor._id, profesorViewModel,
+                ) { dialogState = true }
             }
         }
     }
 }
 
 @Composable
-fun AlumnoCard(
+fun profesorCard(
     alumno: String,
     apellido: String,
     edad: String,
     _id: String,
-    alumnosViewModel: AlumnosViewModel,
+    profesorViewModel: ProfesorViewModel,
     state: () -> Unit
 ) {
     Card(
@@ -94,9 +93,9 @@ fun AlumnoCard(
             .pointerInput(Unit) {
                 detectTapGestures(onLongPress = {
                     state()
-                    alumnosViewModel.changeToUpdate(true)
-                    alumnosViewModel.onAlumnChange(alumno,apellido,edad)
-                    alumnosViewModel.onAlumnUpdateId(_id)
+                    profesorViewModel.changeToUpdate(true)
+                    profesorViewModel.onProfesorChange(alumno,apellido,edad)
+                    profesorViewModel.onprofesorUpdateId(_id)
                 })
             }
     ) {
@@ -127,7 +126,7 @@ fun AlumnoCard(
                 Icons.Default.Delete, contentDescription = "Delete Icon",
                 modifier = Modifier.pointerInput(Unit) {
                     detectTapGestures(onTap = {
-                        alumnosViewModel.deleteAlumn(_id)
+                        profesorViewModel.deleteProfesor(_id)
                     })
                 })
         }
@@ -135,18 +134,18 @@ fun AlumnoCard(
 }
 
 @Composable
-fun alumnoDialog(state: Boolean, onDismiss: () -> Unit, alumnosViewModel: AlumnosViewModel) {
+fun profesorDialog(state: Boolean, onDismiss: () -> Unit, profesorViewModel: ProfesorViewModel) {
     var enableButton by remember { mutableStateOf(false) }
-    val alumno: String by alumnosViewModel.nombre.observeAsState(initial = "")
-    val apellido: String by alumnosViewModel.apellido.observeAsState(initial = "")
-    val edad: String by alumnosViewModel.edad.observeAsState(initial = "")
-    val alumnId: String by alumnosViewModel.alumnId.observeAsState(initial = "")
-    val isUpdate: Boolean by alumnosViewModel.isUpdate.observeAsState(initial = false)
+    val alumno: String by profesorViewModel.nombre.observeAsState(initial = "")
+    val apellido: String by profesorViewModel.apellido.observeAsState(initial = "")
+    val edad: String by profesorViewModel.edad.observeAsState(initial = "")
+    val alumnId: String by profesorViewModel.profesorId.observeAsState(initial = "")
+    val isUpdate: Boolean by profesorViewModel.isUpdate.observeAsState(initial = false)
 
     if (state) {
         Dialog(onDismissRequest = {
             onDismiss()
-            alumnosViewModel.clearAlumn()
+            profesorViewModel.clearProfesor()
         }) {
             Card(
                 //shape = MaterialTheme.shapes.medium,
@@ -161,7 +160,7 @@ fun alumnoDialog(state: Boolean, onDismiss: () -> Unit, alumnosViewModel: Alumno
                 ) {
 
                     androidx.compose.material.Text(
-                        text = "Alumno",
+                        text = "Profesor",
                         modifier = Modifier.padding(8.dp),
                         fontSize = 20.sp
                     )
@@ -169,7 +168,7 @@ fun alumnoDialog(state: Boolean, onDismiss: () -> Unit, alumnosViewModel: Alumno
                     OutlinedTextField(
                         value = alumno,
                         onValueChange = {
-                            alumnosViewModel.onAlumnChange(
+                            profesorViewModel.onProfesorChange(
                                 name = it,
                                 apellido = apellido,
                                 edad = edad
@@ -180,7 +179,7 @@ fun alumnoDialog(state: Boolean, onDismiss: () -> Unit, alumnosViewModel: Alumno
                     OutlinedTextField(
                         value = apellido,
                         onValueChange = {
-                            alumnosViewModel.onAlumnChange(
+                            profesorViewModel.onProfesorChange(
                                 name = alumno,
                                 apellido = it,
                                 edad = edad
@@ -192,7 +191,7 @@ fun alumnoDialog(state: Boolean, onDismiss: () -> Unit, alumnosViewModel: Alumno
                     OutlinedTextField(
                         value = edad,
                         onValueChange = {
-                            alumnosViewModel.onAlumnChange(
+                            profesorViewModel.onProfesorChange(
                                 name = alumno,
                                 apellido = apellido,
                                 edad = it
@@ -206,7 +205,7 @@ fun alumnoDialog(state: Boolean, onDismiss: () -> Unit, alumnosViewModel: Alumno
                         OutlinedButton(
                             onClick = {
                                 onDismiss()
-                                alumnosViewModel.clearAlumn()
+                                profesorViewModel.clearProfesor()
                             },
                             Modifier
                                 .fillMaxWidth()
@@ -221,7 +220,7 @@ fun alumnoDialog(state: Boolean, onDismiss: () -> Unit, alumnosViewModel: Alumno
                             Button(
                                 enabled = enableButton,
                                 onClick = {
-                                    alumnosViewModel.addAlumn(
+                                    profesorViewModel.addProfesor(
                                         nombre = alumno,
                                         apellido = apellido,
                                         edad = edad
@@ -239,7 +238,7 @@ fun alumnoDialog(state: Boolean, onDismiss: () -> Unit, alumnosViewModel: Alumno
                             Button(
                                 enabled = enableButton,
                                 onClick = {
-                                    alumnosViewModel.updateAlumn(
+                                    profesorViewModel.updateProfesor(
                                         id = alumnId,
                                         nombre = alumno,
                                         apellido = apellido,

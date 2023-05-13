@@ -5,5 +5,6 @@ data class AlumnResponse(
     val alumnos: List<AlumnoModel>,
     val token: String,
     val alumno: AlumnoModel,
+    val profesores: List<AlumnoModel>,
     val errores: ErrorModel
 )

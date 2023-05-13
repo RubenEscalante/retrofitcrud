@@ -12,6 +12,7 @@ import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
 
 interface WebService {
@@ -45,5 +46,33 @@ interface WebService {
         @Path("id") id: String
     ): Response<AlumnResponse>
 
+    @PUT("/api/alumnos/{id}")
+    suspend fun updateAlumnos(
+        @Header("x-auth-token") authToken: String,
+        @Path("id") id: String,
+        @Body addAlumnoModel: AddAlumnoModel
+    ): Response<AlumnResponse>
+
     //Profesor
+    @GET("/api/profesores")
+    suspend fun getProfesores(@Header("x-auth-token") authToken: String): Response<AlumnResponse>
+
+    @POST("/api/profesores")
+    suspend fun addProfesor(
+        @Header("x-auth-token") authToken: String,
+        @Body addAlumnoModel: AddAlumnoModel
+    ): Response<AlumnResponse>
+
+    @DELETE("/api/profesores/{id}")
+    suspend fun deleteProfesor(
+        @Header("x-auth-token") authToken: String,
+        @Path("id") id: String
+    ): Response<AlumnResponse>
+
+    @PUT("/api/profesores/{id}")
+    suspend fun updateProfesor(
+        @Header("x-auth-token") authToken: String,
+        @Path("id") id: String,
+        @Body addAlumnoModel: AddAlumnoModel
+    ): Response<AlumnResponse>
 }
